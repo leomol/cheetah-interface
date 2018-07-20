@@ -11,7 +11,7 @@ This library and Cheetah Acquisition Software may run in the same or in differen
 ## Installation
 * Download library from repository and place the MATLAB folder under Documents folder.
 * Create/modify Documents/MATLAB/startup.m and put `addpath(NetComDevelopmentPackage_v3.1.0\MATLAB_M-files');`
-* Make sure MATLAB is enabled in Window's firewall. Normally a popup will come up during the first connection.
+* Make sure MATLAB is enabled in Window's firewall. Normally a pop-up will come up during the first connection.
 
 ## Example using `Cheetah.m`:
 ```matlab
