@@ -5,7 +5,7 @@ This library and Cheetah Acquisition Software may run in the same or in differen
 ## Prerequisites
 * [MATLAB][MATLAB] (last tested with R2018a)
 * [Cheetah][Cheetah]
-* [NetComDevelopmentPackage][NetComPartial] but can also be downloaded from [Neuralynx][NetComFull]
+* [NetComDevelopmentPackage][NetComPartial] (already included but can also be downloaded from [Neuralynx][NetComFull])
 * Windows 10, 64Bit (32 bit version not tested).
 
 ## Installation
@@ -30,8 +30,8 @@ This project is licensed under the [GNU GPLv3 License][LICENSE.md].
 
 [Leonardo Molina]: https://github.com/leomol
 [MATLAB]: https://www.mathworks.com/downloads/
-[Cheetah]: https://neuralynx.com/software/category/development
-[NetComPartial]: NetComDevelopmentPackage_v3
+[Cheetah]: https://neuralynx.com/
+[NetComPartial]: NetComDevelopmentPackage_v3.1.0
 [NetComFull]: https://neuralynx.com/software/category/development
 [Neuralynx]: https://neuralynx.com
 [LICENSE.md]: LICENSE.md
