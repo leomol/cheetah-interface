@@ -1,10 +1,19 @@
-classdef Event < Cheetah.Object
+% Event - Interface with Cheetah Acquisition Entity.
+% Event methods:
+%   getData - return struct with data fields available for the acquisition entity.
+
+% 2011-12-14. Leonardo Molina.
+% 2018-08-13. Last modified.
+classdef Event < CheetahWrapper.Stream
     methods
-        function obj = Event(name)
-            obj = obj@Cheetah.Object(name);
+        function obj = Event(name, cheetah)
+            obj = obj@CheetahWrapper.Stream(name, cheetah);
         end
         
         function data = getData(obj)
+            % CheetahWrapper.Event.getData()
+            % Return struct with data fields available for the acquisition entity.
+            
             % Get buffer sizes from NetCom DLL.
             bufferSize = calllib('MatlabNetComClient', 'GetRecordBufferSize');
             maxStringLength = calllib('MatlabNetComClient', 'GetMaxEventStringLength');
@@ -12,7 +21,7 @@ classdef Event < Cheetah.Object
             placeholder = blanks(maxStringLength);
 
             % Clear out all of the return values and preallocate space for the variables.
-            data.timeStampArray = zeros(1, bufferSize);
+            data.timestampArray = zeros(1, bufferSize);
             data.eventIDArray = zeros(1, bufferSize);
             data.ttlValueArray = zeros(1, bufferSize);
             data.stringArray = repmat({placeholder}, 1, bufferSize);
@@ -20,25 +29,25 @@ classdef Event < Cheetah.Object
             data.numRecordsReturned = 0;
             
             % Setup the ref pointers for the function call.
-            timeStampArrayPtr = libpointer('int64PtrPtr', data.timeStampArray);
+            timestampArrayPtr = libpointer('int64PtrPtr', data.timestampArray);
             eventIDArrayPtr = libpointer('int32PtrPtr', data.eventIDArray);
             ttlValueArrayPtr = libpointer('int32PtrPtr', data.ttlValueArray);
             eventStringArrayPtr = libpointer('stringPtrPtr', data.stringArray);
             numRecordsReturnedPtr = libpointer('int32Ptr', data.numRecordsReturned);
             numRecordsDroppedPtr = libpointer('int32Ptr', data.numRecordsDropped);
-            [~, ~, data.timeStampArray, data.eventIDArray, data.ttlValueArray, data.stringArray, data.numRecordsReturned, data.numRecordsDropped] = calllib('MatlabNetComClient', 'GetNewEventData', obj.name, timeStampArrayPtr, eventIDArrayPtr, ttlValueArrayPtr, eventStringArrayPtr, numRecordsReturnedPtr, numRecordsDroppedPtr);
-            data.objectName = obj.name;
+            [~, ~, data.timestampArray, data.eventIDArray, data.ttlValueArray, data.stringArray, data.numRecordsReturned, data.numRecordsDropped] = calllib('MatlabNetComClient', 'GetNewEventData', obj.name, timestampArrayPtr, eventIDArrayPtr, ttlValueArrayPtr, eventStringArrayPtr, numRecordsReturnedPtr, numRecordsDroppedPtr);
+            data.streamName = obj.name;
             
             % Format the return arrays.
             if data.numRecordsReturned > 0
                 % Truncate arrays to the number of returned records.
-                data.timeStampArray = data.timeStampArray(1:data.numRecordsReturned);
+                data.timestampArray = data.timestampArray(1:data.numRecordsReturned);
                 data.eventIDArray = data.eventIDArray(1:data.numRecordsReturned);
                 data.ttlValueArray = data.ttlValueArray(1:data.numRecordsReturned);
                 data.stringArray = data.stringArray(1:data.numRecordsReturned);
             else
                 % Return empty arrays if no data was retrieved.
-                data.timeStampArray = [];
+                data.timestampArray = [];
                 data.eventIDArray = [];
                 data.ttlValueArray = [];
                 data.stringArray = [];
