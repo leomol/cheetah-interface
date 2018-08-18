@@ -1,4 +1,4 @@
-# Cheetah wrapper
+# Cheetah interface
 MATLAB classes to interact with Cheetah Acquisition System from [Neuralynx][Neuralynx] during a recording session.
 This library and Cheetah Acquisition Software may run in the same or in different computers.
 
@@ -15,6 +15,7 @@ This library and Cheetah Acquisition Software may run in the same or in differen
 * Download and extract this library to Documents/MATLAB folder.
 
 ## Example 1 - plot spikes from a tetrode:
+[![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/19h34s5LPmWgZJFF17zxef8f8A4bYAu90)
 * Record a few minutes of spiking data with Cheetah (tetrode TT1 must be one of the acquisition entities).
 * Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D)
 * Start acquisition in Cheetah and run:
