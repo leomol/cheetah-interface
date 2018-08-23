@@ -1,12 +1,16 @@
 # Cheetah interface
 MATLAB classes to interact with Cheetah Acquisition System from [Neuralynx][Neuralynx] during a recording session.
 This library and Cheetah Acquisition Software may run in the same or in different computers.
+A typical experiment consists of:
+* Recording 5-10 minutes of spiking data
+* Spike sorting and creating neuronal templates
+* Acquiring more data to reinforce occurrences of selected neuronal state vectors in a feedback loop.
 
 ## Prerequisites
 * [MATLAB][MATLAB] (last tested with R2018a)
 * [Cheetah][Cheetah]
 * [SpikeSort3D][SpikeSort3D] (optional)
-* [NetComDevelopmentPackage][NetComPartial] (already included but can also be downloaded from [Neuralynx][NetComFull])
+* [NetComDevelopmentPackage][NetComPartial] (dependencies already included but can also be downloaded from [Neuralynx][NetComFull])
 * Windows 10, 64Bit (32 bit version not tested).
 
 ## Installation
