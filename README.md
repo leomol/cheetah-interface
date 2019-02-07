@@ -31,7 +31,7 @@ A typical experiment consists of:
 	waveformFile = 'TT1.nse';
 	clusterFile = 'TT1.clu.1';
 	
-	% Detect neuronal activation. Beep whenever a spike matches the target.
+	% Detect neuronal activation.
 	ids = 1:10;
 	count = 2;
 	window = 0.200;
