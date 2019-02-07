@@ -10,20 +10,23 @@
 % in the acquisition system.
 % 
 % Example:
-%   cheetah = CheetahWrapper();
-%   stream = cheetah.getStream('TT48');
-%   stream.send('TT48.nse', 'TT48.clu.1');
-%   ids = 1:10;
-%   count = 2;
-%   window = 0.200;
-%   spikeTrigger(stream, ids count, window);
-%   
-%   Alternatively, provide your own stimulation function:
-%   stimulationFunction = @() pulse('COM1', 0.100);
-%   spikeTrigger(stream, ids count, window, stimulationFunction);
+%     streamName = 'TT1';
+%     waveformFile = 'TT1.nse';
+%     clusterFile = 'TT1.clu.1';
+%     ids = 1:10;
+%     count = 2;
+%     window = 0.200;
+%     cheetah = CheetahWrapper();
+%     stream = cheetah.getStream(streamName);
+%     stream.send(waveformFile, clusterFile);
+%     patternTrigger(stream, ids, count, window);
+%     
+% Alternatively, provide your own stimulation function:
+%     stimulationFunction = @() pulse('COM1', 0.100);
+%     patternTrigger(stream, ids count, window, stimulationFunction);
 
 % 2018-08-12. Leonardo Molina.
-% 2019-02-06. Last modified.
+% 2019-02-07. Last modified.
 function patternTrigger(stream, ids, count, window, stimulationFunction)
     % Expect 1 or 4 arguments.
     if nargin == 0 || (nargin > 1 && nargin < 4)

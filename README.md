@@ -39,15 +39,15 @@ A typical experiment consists of:
 	% Interface with Cheetah.
 	cheetah = CheetahWrapper();
 
-	% Get the electrode stream.
-	electrode = cheetah.getStream(streamName);
+	% Get acquisition stream.
+	stream = cheetah.getStream(streamName);
 
-	% Send the cluster definition to Cheetah.
-	electrode.send(waveformFile, clusterFile);
-	patternTrigger(electrode, ids, count, window);
+	% Send cluster definition to Cheetah.
+	stream.send(waveformFile, clusterFile);
 
 	% Produce a default stimulus when the given neuronal ensemble activates.
-	patternTrigger(electrode, ids, count, window);
+	stimulationFunction = @() pulse('COM1', 0.100);
+	patternTrigger(stream, ids count, window, stimulationFunction);
 ```
 
 ## Example 2 - list all acquisition entities loaded in the configuration file:
