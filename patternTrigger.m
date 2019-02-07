@@ -22,7 +22,7 @@
 %     patternTrigger(stream, ids, count, window);
 %     
 % Alternatively, provide your own stimulation function:
-%     stimulationFunction = @() pulse('COM1', 0.100);
+%     stimulationFunction = @() tone(2250, 0.1);
 %     patternTrigger(stream, ids count, window, stimulationFunction);
 
 % 2018-08-12. Leonardo Molina.

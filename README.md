@@ -46,7 +46,7 @@ A typical experiment consists of:
 	stream.send(waveformFile, clusterFile);
 
 	% Produce a default stimulus when the given neuronal ensemble activates.
-	stimulationFunction = @() pulse('COM1', 0.100);
+	stimulationFunction = @() tone(2250, 0.1);
 	patternTrigger(stream, ids count, window, stimulationFunction);
 ```
 
