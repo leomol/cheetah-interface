@@ -11,7 +11,7 @@
 % connected       - Whether a connection was established.
 
 % 2011-12-14. Leonardo Molina.
-% 2018-08-16. Last modified.
+% 2019-02-05. Last modified.
 classdef CheetahWrapper < handle
     properties (Dependent)
         connected
@@ -131,6 +131,7 @@ classdef CheetahWrapper < handle
                 obj.mConnected = true;
             else
                 success = false;
+                obj.mConnected = false;
             end
         end
         

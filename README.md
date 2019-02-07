@@ -26,20 +26,28 @@ A typical experiment consists of:
 * Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D)
 * Start acquisition in Cheetah and run:
 ```matlab
+	% Define acquisition entity name, waveform file, and cluster file.
+	streamName = 'TT1';
+	waveformFile = 'TT1.nse';
+	clusterFile = 'TT1.clu.1';
+	
+	% Detect neuronal activation. Beep whenever a spike matches the target.
+	ids = 1:10;
+	count = 2;
+	window = 0.200;
+	
 	% Interface with Cheetah.
 	cheetah = CheetahWrapper();
 
 	% Get the electrode stream.
-	electrode = cheetah.getStream('TT1');
+	electrode = cheetah.getStream(streamName);
 
 	% Send the cluster definition to Cheetah.
-	nseFile = 'TT1.nse';
-	clusterFile = 'TT1.clu.1';
-	electrode.send(nseFile, clusterFile);
+	electrode.send(waveformFile, clusterFile);
+	patternTrigger(electrode, ids, count, window);
 
-	% Detect neuronal activation. Beep whenever a spike matches the target.
-	target = 7;
-	spikeTrigger(electrode, target);
+	% Produce a default stimulus when the given neuronal ensemble activates.
+	patternTrigger(electrode, ids, count, window);
 ```
 
 ## Example 2 - list all acquisition entities loaded in the configuration file:
@@ -65,11 +73,14 @@ A typical experiment consists of:
 The downside of running both programs in the same computer is that your analysis scripts may take up resources needed for data acquisition. The downside of running both programs in different computers is the delay introduced by the network communication.
 
 ## Version History
+### 0.1.1
+* Demo script now triggers based on ensemble activity.
+* Test function takes an arbitrary stimulation function as input.
 ### 0.1.0
 * Initial Release: Library and example code
 
 ## License
-© 2018 [Leonardo Molina][Leonardo Molina]
+© 2019 [Leonardo Molina][Leonardo Molina]
 
 This project is licensed under the [GNU GPLv3 License][LICENSE.md].
 
