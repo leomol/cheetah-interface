@@ -7,6 +7,8 @@ A typical experiment consists of:
 * Spike sorting and creating neuronal templates
 * Acquiring more data to reinforce occurrences of selected neuronal state vectors in a feedback loop.
 
+[![Spike stream demo](selection-window.png)]
+
 ## Prerequisites
 * [MATLAB][MATLAB] (last tested with R2018a)
 * [Cheetah][Cheetah]
@@ -19,7 +21,7 @@ A typical experiment consists of:
 * Make sure MATLAB is enabled in Window's firewall. Normally a pop-up will come up during the first connection.
 * Download and extract this library to Documents/MATLAB folder.
 
-## Example 2 - plot spikes from a tetrode:
+## Example 1 - plot spikes from a tetrode:
 [![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/19h34s5LPmWgZJFF17zxef8f8A4bYAu90)
 * Record a few minutes of spiking data with Cheetah (tetrode TT1 must be one of the acquisition entities).
 * Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D)
@@ -49,7 +51,7 @@ A typical experiment consists of:
 	patternTrigger(stream, ids count, window, stimulationFunction);
 ```
 
-## Example 3 - list all acquisition entities loaded in the configuration file:
+## Example 2 - list all acquisition entities loaded in the configuration file:
 ```matlab
 	cheetah = CheetahWrapper();
 	streams = obj.getStreams();
@@ -59,7 +61,7 @@ A typical experiment consists of:
 	end
 ```
 
-## Example 4 - display acquisition time from one of the stream objects:
+## Example 3 - display acquisition time from one of the stream objects:
 ```matlab
 	cheetah = CheetahWrapper();
 	streams = obj.getStreams();
