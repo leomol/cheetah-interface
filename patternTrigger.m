@@ -26,7 +26,7 @@
 %     patternTrigger(stream, ids count, window, stimulationFunction);
 
 % 2018-08-12. Leonardo Molina.
-% 2019-02-07. Last modified.
+% 2019-04-10. Last modified.
 function patternTrigger(stream, ids, count, window, stimulationFunction)
     % Expect 1 or 4 arguments.
     if nargin == 0 || (nargin > 1 && nargin < 4)
@@ -45,7 +45,7 @@ function patternTrigger(stream, ids, count, window, stimulationFunction)
     count = min(count, numel(ids));
     
     % Figure for plotting and releasing resources.
-    handle = figure('Name', 'Cheetah Wrapper - Pattern Trigger', 'NumberTitle', 'off');
+    handle = figure('Name', 'Cheetah Wrapper - Pattern Trigger', 'NumberTitle', 'off', 'ToolBar', 'none', 'MenuBar', 'none');
     % Create a palette to color spikes from different clusters.
     rng(0);
     colors = colorcube(100);

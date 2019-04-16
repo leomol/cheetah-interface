@@ -1,7 +1,7 @@
 % CheetahWrapper.Stream - Common methods on a Cheetah acquisition entity.
 
 % 2011-12-14. Leonardo Molina.
-% 2018-08-13. Last modified.
+% 2019-10-04. Last modified.
 classdef Stream < handle
     properties (SetAccess = private)
         % name - The tag name assigned to this object.
@@ -18,12 +18,7 @@ classdef Stream < handle
             
             obj.name = name;
             obj.cheetah = cheetah;
-            if obj.cheetah.connected
-                success = calllib('MatlabNetComClient', 'OpenStream', name);
-            else
-                success = false;
-            end
-            if ~success
+            if ~obj.cheetah.openStream(name)
                 error('Cheetah not connected.');
             end
         end
@@ -31,9 +26,8 @@ classdef Stream < handle
         function delete(obj)
             % CheetahWrapper.Stream.delete()
             % Close the stream associated to this object.
-            
-            if obj.cheetah.connected
-                calllib('MatlabNetComClient', 'CloseStream', obj.name);
+            if isobject(obj.cheetah)
+                obj.cheetah.closeStream(obj.name);
             end
         end
     end

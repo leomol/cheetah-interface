@@ -1,7 +1,7 @@
 % CheetahWrapper.WaveformTemplate - Send cluster definitions from files.
 
 % 2011-12-14. Leonardo Molina.
-% 2018-08-13. Last modified.
+% 2019-04-10. Last modified.
 classdef WaveformTemplate < handle
     properties (Access = private)
         cheetah
@@ -14,10 +14,10 @@ classdef WaveformTemplate < handle
             obj.cheetah = cheetah;
         end
         
-        function match = send(obj, var1, var2)
+        function send(obj, var1, var2)
             % CheetahWrapper.WaveformTemplate.send(spikeFile, clusterFile)
             % 
-            % WaveformTemplate.send(clusterId, limits)
+            % CheetahWrapper.WaveformTemplate.send(clusterId, limits)
             % where limits is a 2 x 32 matrix x n of min and max values
             % delimiting spike waveforms with 32 points.
             % [min1, min2, ..., min32
@@ -40,49 +40,17 @@ classdef WaveformTemplate < handle
             else
                 spikeFile = var1;
                 clusterFile = var2;
-                % waveforms: 32 x 4* x n
-                waveforms = Nlx2MatSpike(spikeFile, [0 0 0 0 1], 0, 1, []);
-                [~, ~, ext] = fileparts(clusterFile);
-                if strcmpi(ext, '.clusters')
-                    tmp = load(clusterFile, '-mat');
-                    idMap = zeros(0, 0);
-                    for k = 1:numel(tmp.MClust_Clusters)
-                        idMap(tmp.MClust_Clusters{k}.myPoints) = k;
-                    end
-                else
-                    fid = fopen(clusterFile, 'r');
-                    idMap = textscan(fid, '%f', 'CollectOutput', true, 'CommentStyle', '%');
-                    idMap = idMap{1};
-                    fclose(fid);
-                end
-                
-                nSpikes = size(waveforms, 3);
-                nClustered = numel(idMap);
-                if nSpikes == nClustered
-                    match = true;
-                elseif nClustered > nSpikes
-                    idMap = idMap(1:nSpikes);
-                    match = false;
-                else
-                    waveforms = waveforms(:, :, 1:nClustered);
-                    match = false;
-                end
-                
-                uids = unique(idMap(:)');
-                for id = uids
-                    k = idMap == id;
-                    av = mean(waveforms(:, :, k), 3);
-                    sd = std(waveforms(:, :, k), [], 3);
-                    av = permute(av, [3, 1, 2]);
-                    sd = permute(sd, [3, 1, 2]);
-                    limits = [av - sd; av + sd];
-                    obj.send(id, limits);
+                [~, waveformLimits] = CheetahWrapper.getWaveforms(spikeFile, clusterFile);
+                for id = waveformLimits.keys
+                    obj.send(id, waveformLimits);
                 end
             end
         end
         
         function clear(obj)
-            obj.cheetah.send(sprintf('-ClearClusters %s\n', obj.name));
+            if isobject(obj.cheetah)
+                obj.cheetah.send(sprintf('-ClearClusters %s\n', obj.name));
+            end
         end
         
         function delete(obj)

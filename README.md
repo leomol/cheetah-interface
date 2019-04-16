@@ -7,7 +7,6 @@ A typical experiment consists of:
 * Spike sorting and creating neuronal templates
 * Acquiring more data to reinforce occurrences of selected neuronal state vectors in a feedback loop.
 
-
 ## Prerequisites
 * [MATLAB][MATLAB] (last tested with R2018a)
 * [Cheetah][Cheetah]
@@ -20,7 +19,7 @@ A typical experiment consists of:
 * Make sure MATLAB is enabled in Window's firewall. Normally a pop-up will come up during the first connection.
 * Download and extract this library to Documents/MATLAB folder.
 
-## Example 1 - plot spikes from a tetrode:
+## Example 2 - plot spikes from a tetrode:
 [![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/19h34s5LPmWgZJFF17zxef8f8A4bYAu90)
 * Record a few minutes of spiking data with Cheetah (tetrode TT1 must be one of the acquisition entities).
 * Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D)
@@ -50,7 +49,7 @@ A typical experiment consists of:
 	patternTrigger(stream, ids count, window, stimulationFunction);
 ```
 
-## Example 2 - list all acquisition entities loaded in the configuration file:
+## Example 3 - list all acquisition entities loaded in the configuration file:
 ```matlab
 	cheetah = CheetahWrapper();
 	streams = obj.getStreams();
@@ -60,7 +59,7 @@ A typical experiment consists of:
 	end
 ```
 
-## Example 3 - display acquisition time from one of the stream objects:
+## Example 4 - display acquisition time from one of the stream objects:
 ```matlab
 	cheetah = CheetahWrapper();
 	streams = obj.getStreams();
@@ -73,7 +72,9 @@ A typical experiment consists of:
 The downside of running both programs in the same computer is that your analysis scripts may take up resources needed for data acquisition. The downside of running both programs in different computers is the delay introduced by the network communication.
 
 ## Version History
-### 0.1.1
+### 0.1.2
+* Demo script has a selection window for activity patterns.
+* Demo script has been tested for latencies (< 15ms).
 * Demo script now triggers based on ensemble activity.
 * Test function takes an arbitrary stimulation function as input.
 ### 0.1.0

@@ -11,7 +11,7 @@
 % connected       - Whether a connection was established.
 
 % 2011-12-14. Leonardo Molina.
-% 2019-02-05. Last modified.
+% 2019-04-15. Last modified.
 classdef CheetahWrapper < handle
     properties (Dependent)
         connected
@@ -32,6 +32,8 @@ classdef CheetahWrapper < handle
         
         % names - List of all acquisition entity names.
         names = {}
+        
+        debug = false
     end
     
     methods
@@ -41,6 +43,9 @@ classdef CheetahWrapper < handle
             % Create a connection to Cheetah Acquisition System at the given
             % server, which may be either an ip address (e.g. 127.0.0.1 or a
             % fully qualified domain name).
+            
+            dependencies = fullfile(fileparts(mfilename('fullpath')), ['+', mfilename('class')], 'dependencies');
+            addpath(genpath(dependencies));
             
             if nargin == 0
                 server = 'localhost';
@@ -87,7 +92,9 @@ classdef CheetahWrapper < handle
             
             
             k = ismember(obj.names, name);
-            if any(k)
+            if obj.debug
+                stream = obj.streams{1};
+            elseif any(k)
                 stream = obj.streams{k};
             else
                 error('Stream %s does not exist.', name);
@@ -99,7 +106,10 @@ classdef CheetahWrapper < handle
             % Send a command to Cheetah. Cheetah's documentation lists all
             % valid commands.
             
-            if obj.connected
+            if obj.debug
+                obj.debug = obj.connected;
+                response = '';
+            elseif obj.connected
                 maxResponseLength = 1000;
                 placeholder = blanks(maxResponseLength);
                 replyPointer = libpointer('stringPtrPtr', {placeholder});
@@ -113,6 +123,22 @@ classdef CheetahWrapper < handle
         function connected = get.connected(obj)
             connected = obj.mConnected;
         end
+        
+        function success = openStream(obj, name)
+            if obj.debug
+                success = true;
+            elseif obj.connected
+                success = calllib('MatlabNetComClient', 'OpenStream', name);
+            else
+                success = false;
+            end
+        end
+        
+        function closeStream(obj, name)
+            if ~obj.debug && obj.connected
+                calllib('MatlabNetComClient', 'CloseStream', name);
+            end
+        end
     end
     
     methods (Access = private)
@@ -120,13 +146,13 @@ classdef CheetahWrapper < handle
             % success = CheetahWrapper.connect(server)
             % Connect to network server (e.g. 'localhost', '192.168.1.100', ...)
             
-            if ~libisloaded('MatlabNetComClient')
+            if ~obj.debug && ~libisloaded('MatlabNetComClient')
                 loadlibrary('MatlabNetComClient3_x64', 'MatlabNetComClient3_x64_proto', 'alias', 'MatlabNetComClient');
             end
             if obj.connected
                 obj.disconnect();
             end
-            if calllib('MatlabNetComClient', 'ConnectToServer', server)
+            if obj.debug || calllib('MatlabNetComClient', 'ConnectToServer', server)
                 success = true;
                 obj.mConnected = true;
             else
@@ -139,7 +165,7 @@ classdef CheetahWrapper < handle
             % success = CheetahWrapper.disconnect()
             % Disconnect from a previously stablished connection to Cheetah.
             
-            if obj.connected && libisloaded('MatlabNetComClient')
+            if ~obj.debug && obj.connected && libisloaded('MatlabNetComClient')
                 success = obj.send(sprintf('-PostEvent "%s disconnected." 0 0', obj.className));
                 success = success & calllib('MatlabNetComClient', 'DisconnectFromServer');
                 unloadlibrary('MatlabNetComClient');
@@ -153,39 +179,45 @@ classdef CheetahWrapper < handle
             % Read all acquisition entitiets loaded in Cheetah 
             
             if obj.connected
-                maxStreams = 5000;
-                maxStringLength = 100;
-                placeholder = blanks(maxStringLength);
-                stringArray = repmat({placeholder}, 1, maxStreams);
-                objectPointers = libpointer('stringPtrPtr', stringArray);
-                typePointers = libpointer('stringPtrPtr', stringArray);
-                [success, tags, types, ~, nStreams] = calllib('MatlabNetComClient', 'GetDASObjectsAndTypes', objectPointers, typePointers, maxStringLength, maxStreams);
-                tags = tags(1:nStreams);
-                types = types(1:nStreams);
-                if success
-                    obj.streams = cell(nStreams, 1);
-                    for i = 1:nStreams
-                        type = types{i};
-                        name = tags{i};
-                        switch type
-                            case 'SEScAcqEnt'   % Single electrode.
-                                obj.streams{i} = CheetahWrapper.SingleElectrode(name, obj);
-                            case 'STScAcqEnt'   % Stereotrode.
-                                obj.streams{i} = CheetahWrapper.Stereotrode(name, obj);
-                            case 'TTScAcqEnt'   % Tetrode.
-                                obj.streams{i} = CheetahWrapper.Tetrode(name, obj);
-                            case 'CscAcqEnt'    % Continuously sampled channel.
-                                obj.streams{i} = CheetahWrapper.ContinuoslySampled(name, obj);
-                            case 'EventAcqEnt'  % Event.
-                                obj.streams{i} = CheetahWrapper.Event(name, obj);
-                            case 'VTAcqEnt'     % Video tracker.
-                                obj.streams{i} = CheetahWrapper.VideoTracker(name, obj);
-                            case 'AcqSource'    % Acquisition Source.
-                                % not implemented.
+                if obj.debug
+                    obj.streams = {CheetahWrapper.SignalGenerator('SignalGenerator', obj, 1:10, 2, 0.5)};
+                    obj.names = {'SignalGenerator'};
+                    success = true;
+                else
+                    maxStreams = 5000;
+                    maxStringLength = 100;
+                    placeholder = blanks(maxStringLength);
+                    stringArray = repmat({placeholder}, 1, maxStreams);
+                    objectPointers = libpointer('stringPtrPtr', stringArray);
+                    typePointers = libpointer('stringPtrPtr', stringArray);
+                    [success, tags, types, ~, nStreams] = calllib('MatlabNetComClient', 'GetDASObjectsAndTypes', objectPointers, typePointers, maxStringLength, maxStreams);
+                    tags = tags(1:nStreams);
+                    types = types(1:nStreams);
+                    if success
+                        obj.streams = cell(nStreams, 1);
+                        for i = 1:nStreams
+                            type = types{i};
+                            name = tags{i};
+                            switch type
+                                case 'SEScAcqEnt'   % Single electrode.
+                                    obj.streams{i} = CheetahWrapper.SingleElectrode(name, obj);
+                                case 'STScAcqEnt'   % Stereotrode.
+                                    obj.streams{i} = CheetahWrapper.Stereotrode(name, obj);
+                                case 'TTScAcqEnt'   % Tetrode.
+                                    obj.streams{i} = CheetahWrapper.Tetrode(name, obj);
+                                case 'CscAcqEnt'    % Continuously sampled channel.
+                                    obj.streams{i} = CheetahWrapper.ContinuoslySampled(name, obj);
+                                case 'EventAcqEnt'  % Event.
+                                    obj.streams{i} = CheetahWrapper.Event(name, obj);
+                                case 'VTAcqEnt'     % Video tracker.
+                                    obj.streams{i} = CheetahWrapper.VideoTracker(name, obj);
+                                case 'AcqSource'    % Acquisition Source.
+                                    % not implemented.
+                            end
                         end
+                        obj.streams(ismember(types, 'AcqSource')) = [];
+                        obj.names = cellfun(@(stream) stream.name, obj.streams, 'UniformOutput', false);
                     end
-                    obj.streams(ismember(types, 'AcqSource')) = [];
-                    obj.names = cellfun(@(stream) stream.name, obj.streams, 'UniformOutput', false);
                 end
             else
                 success = false;
@@ -199,12 +231,62 @@ classdef CheetahWrapper < handle
             % This checkining operation might fail even if libraries report
             % a connection, hence it's a good way of telling if anything
             % will fail.
-            if obj.connected
+            
+            if obj.debug
+                success = obj.connected;
+            elseif obj.connected
                 success = obj.send(sprintf('-PostEvent "%s connected." 0 0', obj.className));
                 success = success && calllib('MatlabNetComClient', 'SetApplicationName', obj.className);
             else
                 success = false;
             end
+        end
+    end
+    
+    methods (Static)
+        function [waveforms, waveformLimits, times, timeLimits] = getWaveforms(spikeFile, clusterFile)
+            [~, ~, ext] = fileparts(clusterFile);
+            if strcmpi(ext, '.clusters')
+                tmp = load(clusterFile, '-mat');
+                ids = zeros(0, 0);
+                for k = 1:numel(tmp.MClust_Clusters)
+                    ids(tmp.MClust_Clusters{k}.myPoints) = k;
+                end
+            else
+                fid = fopen(clusterFile, 'r');
+                ids = textscan(fid, '%f', 'CollectOutput', true, 'CommentStyle', '%');
+                ids = ids{1};
+                fclose(fid);
+            end
+
+            % allWaveforms: 32 x 4* x nTotal
+            [allTimes, allWaveforms] = Nlx2MatSpike(spikeFile, [1 0 0 0 1], 0, 1, []);
+            nSpikes = numel(allTimes);
+            nClustered = numel(ids);
+            if nClustered > nSpikes
+                ids = ids(1:nSpikes);
+            else
+                allWaveforms = allWaveforms(:, :, 1:nClustered);
+                allTimes = allTimes(1:nClustered);
+            end
+            
+            % waveforms(id) = 32 x 4* x nId
+            waveforms = containers.Map('KeyType', 'int32', 'ValueType', 'any');
+            % limits: 2 x 32 x 4*
+            waveformLimits = containers.Map('KeyType', 'int32', 'ValueType', 'any');
+            % times(id) = nId x 1
+            times = containers.Map('KeyType', 'int32', 'ValueType', 'any');
+            for id = unique(ids(:)')
+                k = ids == id;
+                waveforms(id) = allWaveforms(:, :, k);
+                % lower:upper: 32 x 4*
+                lower = prctile(waveforms(id), 05, 3);
+                upper = prctile(waveforms(id), 95, 3);
+                waveformLimits(id) = [permute(lower, [3, 1, 2]); permute(upper, [3, 1, 2])];
+                times(id) = allTimes(k);
+            end
+            
+            timeLimits = [allTimes(1), allTimes(2)];
         end
     end
 end
