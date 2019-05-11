@@ -1,6 +1,5 @@
 # Cheetah interface
 MATLAB classes to interact with Cheetah Acquisition System from [Neuralynx][Neuralynx] during a recording session. Examples provided to use neuronal spiking activity to trigger closed-loop stimulation in neurophysiological experiments.
-This library and Cheetah Acquisition Software may run in the same or in different computers.
 
 A typical experiment consists of:
 * Recording 5-10 minutes of spiking data
@@ -20,12 +19,9 @@ A typical experiment consists of:
 * Download and extract this library to Documents/MATLAB folder.
 
 ## Example 1 - closed-loop stimulation in neurophysiological experiments:
-* Record a few minutes of spiking data with Cheetah (tetrode TT1 must be one of the acquisition entities).
-* Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D)
-* Start acquisition in Cheetah and run:
-```matlab
-    ClosedLoop()
-```
+* Record a few minutes of spiking data with Cheetah.
+* Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D).
+* Start acquisition in Cheetah and run `ClosedLoop()` in MATLAB.
 * Load an acquisition entity (e.g. TT1)
 * Create a neuronal pattern by selecting a subset of neurons.
 * Define the required number of coactive neurons in a given time window.
@@ -34,9 +30,9 @@ A typical experiment consists of:
 
 ## Example 2 - plot spikes from a tetrode:
 [![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/19h34s5LPmWgZJFF17zxef8f8A4bYAu90)
-* Record a few minutes of spiking data with Cheetah (tetrode TT1 must be one of the acquisition entities).
+* Record a few minutes of spiking data with Cheetah.
 * Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D)
-* Start acquisition in Cheetah and run:
+* Start acquisition in Cheetah and run the commands below, replacing `TT1` for an existing acquisition entity name:
 ```matlab
 	% Define acquisition entity name, waveform file, and cluster file.
 	streamName = 'TT1';
@@ -82,6 +78,8 @@ A typical experiment consists of:
 	end
 ```
 ## Notes
+This library and Cheetah Acquisition Software may run in the same or in different computers.
+
 The downside of running both programs in the same computer is that your analysis scripts may take up resources needed for data acquisition. The downside of running both programs in different computers is the delay introduced by the network communication.
 
 ## Version History
