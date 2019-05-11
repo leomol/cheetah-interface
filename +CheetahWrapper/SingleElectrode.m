@@ -3,7 +3,7 @@
 %   getData - return struct with data fields available for the acquisition entity.
 
 % 2011-12-14. Leonardo Molina.
-% 2018-08-16. Last modified.
+% 2019-10-05. Last modified.
 classdef SingleElectrode < CheetahWrapper.Stream & CheetahWrapper.WaveformTemplate
     methods
         function obj = SingleElectrode(name, cheetah)
@@ -45,12 +45,13 @@ classdef SingleElectrode < CheetahWrapper.Stream & CheetahWrapper.WaveformTempla
                 % Truncate arrays to the number of returned records.
                 dataArray = dataArray(1:numRecordsReturned * spikeSampleWindowSize * numSubChannels);
                 dataArray = reshape(dataArray, numSubChannels, spikeSampleWindowSize, numRecordsReturned);
+                dataArray = arrayfun(@(i) dataArray(:, :, i), 1:size(dataArray, 3), 'UniformOutput', false);
                 timestampArray = timestampArray(1:numRecordsReturned);
                 spikeChannelNumberArray = spikeChannelNumberArray(1:numRecordsReturned);
                 cellNumberArray = cellNumberArray(1:numRecordsReturned);
                 featureArray = featureArray(1:numRecordsReturned * maxSpikeFeatures);
                 featureArray = reshape(featureArray, maxSpikeFeatures, numRecordsReturned);
-                spikes = struct('waveform', squeeze(num2cell(dataArray, 2))', 'timestamp', num2cell(timestampArray), 'id', num2cell(cellNumberArray), 'channel', num2cell(spikeChannelNumberArray), 'features', num2cell(featureArray, 1));
+                spikes = struct('waveform', dataArray, 'timestamp', num2cell(timestampArray), 'id', num2cell(cellNumberArray), 'channel', num2cell(spikeChannelNumberArray), 'features', num2cell(featureArray, 1));
             else
                 % Return empty arrays if no data was retrieved.
                 spikes = struct('waveform', {}, 'timestamp', {}, 'id', {}, 'channel', {}, 'features', {});

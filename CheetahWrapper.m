@@ -5,13 +5,14 @@
 % CheetahWrapper methods:
 % getStreams()    - Return a cell array of streams.
 % getStream(name) - Return acquisition entity with matching name.
+% log(text)       - Post an event to Cheetah.
 % send(command)   - Send a command to Cheetah.
 % 
 % CheetahWrapper properties:
 % connected       - Whether a connection was established.
 
 % 2011-12-14. Leonardo Molina.
-% 2019-04-15. Last modified.
+% 2019-05-10. Last modified.
 classdef CheetahWrapper < handle
     properties (Dependent)
         connected
@@ -139,6 +140,19 @@ classdef CheetahWrapper < handle
                 calllib('MatlabNetComClient', 'CloseStream', name);
             end
         end
+        
+        function success = log(obj, text)
+            % success = CheetahWrapper.log()
+            % Post an event to Cheetah.
+            
+            if obj.debug
+                success = obj.connected;
+            elseif obj.connected
+                success = obj.send(sprintf('-PostEvent "%s" 0 0', text));
+            else
+                success = false;
+            end
+        end
     end
     
     methods (Access = private)
@@ -235,7 +249,7 @@ classdef CheetahWrapper < handle
             if obj.debug
                 success = obj.connected;
             elseif obj.connected
-                success = obj.send(sprintf('-PostEvent "%s connected." 0 0', obj.className));
+                success = obj.log(sprintf("%s connected.", obj.className));
                 success = success && calllib('MatlabNetComClient', 'SetApplicationName', obj.className);
             else
                 success = false;
@@ -287,6 +301,11 @@ classdef CheetahWrapper < handle
             end
             
             timeLimits = [allTimes(1), allTimes(2)];
+        end
+        
+        function addDependencies
+            dependencies = fullfile(fileparts(mfilename('fullpath')), ['+', mfilename('class')], 'dependencies');
+            addpath(genpath(dependencies));
         end
     end
 end

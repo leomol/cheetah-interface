@@ -12,6 +12,7 @@ classdef ClosedLoop < handle
         count = 2
         window = 0.2
         waveforms
+        waveformLimits
         times
     end
     
@@ -34,6 +35,8 @@ classdef ClosedLoop < handle
             % ClosedLoop()
             % ClosedLoop(..., '-server', server)
             % ClosedLoop(..., '-callback', functionHandle)
+            
+            CheetahWrapper.addDependencies();
             
             obj.server = getParameter(varargin, '-server', {});
             obj.functionHandle = getParameter(varargin, '-callback', {});
@@ -102,7 +105,7 @@ classdef ClosedLoop < handle
                 obj.electrode = obj.cheetah.getStream(streamName);
                 
                 % Read waveforms.
-                [obj.waveforms, waveformLimits, obj.times, timeLimits] = CheetahWrapper.getWaveforms(spikeFile, clusterFile);
+                [obj.waveforms, obj.waveformLimits, obj.times, timeLimits] = CheetahWrapper.getWaveforms(spikeFile, clusterFile);
                 obj.ids = cell2mat(obj.waveforms.keys);
                 obj.nUnits = numel(obj.ids);
                 
@@ -114,13 +117,13 @@ classdef ClosedLoop < handle
                 else
                     set(obj.handles.scroll, 'Visible', 'off', 'Value', 1);
                 end
-
+                
                 % Selection window.
                 ylims = [Inf, -Inf];
                 firingRates = zeros(1, obj.nUnits);
                 for u = 1:obj.nUnits
                     id = obj.ids(u);
-                    wvLimits = waveformLimits(id);
+                    wvLimits = obj.waveformLimits(id);
                     ylims(1) = min([ylims(1), wvLimits(1, :)]);
                     ylims(2) = max([ylims(2), wvLimits(2, :)]);
                     firingRate = numel(obj.times(u)) / diff(timeLimits);
@@ -141,9 +144,9 @@ classdef ClosedLoop < handle
                     ax = axes('Parent', obj.handles.unitPanel(u), 'Units', 'Normalized', 'Position', [0, 0, 1, 1], 'XTick', [], 'YTick', [], 'Box', 'on', 'Visible', 'off');
                     hold(ax, 'all');
                     % Faded limits.
-                    nPoints = size(waveformLimits(id), 2);
+                    wvLimits = mean(obj.waveformLimits(id), 3);
+                    nPoints = size(wvLimits, 2);
                     faces = 1:2 * nPoints;
-                    wvLimits = waveformLimits(id);
                     lower = wvLimits(1, :);
                     upper = wvLimits(2, :);
                     vertices = cat(2, [1:nPoints; lower], [nPoints:-1:1; upper(end:-1:1)])';
@@ -208,10 +211,11 @@ classdef ClosedLoop < handle
             if obj.parse(obj.handles.count) && obj.parse(obj.handles.window)
                 % Clear previous cluster definitions.
                 obj.electrode.clear();
-
-                % Send new cluster definition.
-                obj.electrode.send(obj.waveforms);
-
+                % Send new cluster definitions.
+                for id = obj.ids([obj.handles.checkbox.Value] == 1)
+                    obj.electrode.send(id, obj.waveformLimits(id));
+                    obj.cheetah.log(sprintf('Set definition for cluster %i', id));
+                end
                 % Produce a default stimulus when the given neuronal ensemble activates.
                 patternTrigger(obj.electrode, obj.ids(obj.include), obj.count, obj.window, obj.functionHandle{:});
             end
