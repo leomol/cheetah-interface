@@ -12,7 +12,7 @@
 % connected       - Whether a connection was established.
 
 % 2011-12-14. Leonardo Molina.
-% 2019-05-10. Last modified.
+% 2019-05-11. Last modified.
 classdef CheetahWrapper < handle
     properties (Dependent)
         connected
@@ -45,8 +45,7 @@ classdef CheetahWrapper < handle
             % server, which may be either an ip address (e.g. 127.0.0.1 or a
             % fully qualified domain name).
             
-            dependencies = fullfile(fileparts(mfilename('fullpath')), ['+', mfilename('class')], 'dependencies');
-            addpath(genpath(dependencies));
+            CheetahWrapper.addDependencies();
             
             if nargin == 0
                 server = 'localhost';
@@ -259,6 +258,8 @@ classdef CheetahWrapper < handle
     
     methods (Static)
         function [waveforms, waveformLimits, times, timeLimits] = getWaveforms(spikeFile, clusterFile)
+            CheetahWrapper.addDependencies();
+            
             [~, ~, ext] = fileparts(clusterFile);
             if strcmpi(ext, '.clusters')
                 tmp = load(clusterFile, '-mat');

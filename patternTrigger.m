@@ -26,8 +26,9 @@
 %     patternTrigger(stream, ids count, window, stimulationFunction);
 
 % 2018-08-12. Leonardo Molina.
-% 2019-04-10. Last modified.
+% 2019-05-11. Last modified.
 function patternTrigger(stream, ids, count, window, stimulationFunction)
+    CheetahWrapper.addDependencies();
     % Expect 1 or 4 arguments.
     if nargin == 0 || (nargin > 1 && nargin < 4)
         help(mfilename());
