@@ -25,7 +25,7 @@ A typical experiment consists of:
 * Load an acquisition entity (e.g. TT1)
 * Create a neuronal pattern by selecting a subset of neurons.
 * Define the required number of coactive neurons in a given time window.
-[![Spike stream demo](selection-window.png)]
+![Spike stream demo](selection-window.png)
 * Click on `Send`.
 
 ## Example 2 - plot spikes from a tetrode:
