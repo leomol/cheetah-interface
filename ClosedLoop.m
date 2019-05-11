@@ -18,7 +18,7 @@ classdef ClosedLoop < handle
     properties (Access = private)
         handles
         functionHandle
-        lastFolder = 'C:\Users\molina\Documents\Projects\Interphaser\development\Matlab\cheetah-wrapper\cheetah-wrapper-git\etc\data' % !!
+        lastFolder = ''
         cheetah
         server
         electrode
