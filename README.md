@@ -5,6 +5,7 @@ A typical experiment consists of:
 * Recording 5-10 minutes of spiking data
 * Spike sorting and creating neuronal templates
 * Acquiring more data to reinforce occurrences of selected neuronal state vectors in a feedback loop.
+[![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/19h34s5LPmWgZJFF17zxef8f8A4bYAu90)
 
 ## Prerequisites
 * [MATLAB][MATLAB] (last tested with R2018a)
@@ -25,11 +26,10 @@ A typical experiment consists of:
 * Load an acquisition entity (e.g. TT1)
 * Create a neuronal pattern by selecting a subset of neurons.
 * Define the required number of coactive neurons in a given time window.
-![Spike stream demo](selection-window.png)
 * Click on `Send`.
+![Spike stream demo](selection-window.png)
 
 ## Example 2 - plot spikes from a tetrode:
-[![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/19h34s5LPmWgZJFF17zxef8f8A4bYAu90)
 * Record a few minutes of spiking data with Cheetah.
 * Stop acquisition and sort data with KlustaKwik (e.g. via SpikeSort 3D)
 * Start acquisition in Cheetah and run the commands below, replacing `TT1` for an existing acquisition entity name:
