@@ -5,7 +5,7 @@ A typical experiment consists of:
 * Recording 5-10 minutes of spiking data
 * Spike sorting and creating neuronal templates
 * Acquiring more data to reinforce occurrences of selected neuronal state vectors in a feedback loop.
-[![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/19h34s5LPmWgZJFF17zxef8f8A4bYAu90)
+[![Spike stream demo](cheetah-wrapper-demo.png)](https://drive.google.com/file/d/1APbzi_oyghasV6WPbA7SeP0WfSWiig0g)
 
 ## Prerequisites
 * [MATLAB][MATLAB] (last tested with R2018a)
