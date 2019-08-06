@@ -11,7 +11,7 @@ A typical experiment consists of:
 * [MATLAB][MATLAB] (last tested with R2018a)
 * [Cheetah][Cheetah]
 * [SpikeSort3D][SpikeSort3D] (optional)
-* [NetComDevelopmentPackage][NetComPartial] (dependencies already included but can also be downloaded from [Neuralynx][NetComFull])
+* [NetComDevelopmentPackage][NetComFull] (dependencies already included but can also be downloaded from [Neuralynx][NetComFull])
 * Windows 10, 64Bit (32 bit version not tested).
 
 ## Installation
@@ -100,7 +100,6 @@ This project is licensed under the [GNU GPLv3 License][LICENSE.md].
 [MATLAB]: https://www.mathworks.com/downloads/
 [Cheetah]: https://neuralynx.com/
 [SpikeSort3D]: https://neuralynx.com/software/spikesort-3d
-[NetComPartial]: NetComDevelopmentPackage_v3.1.0
 [NetComFull]: https://neuralynx.com/software/category/development
 [Neuralynx]: https://neuralynx.com
 [LICENSE.md]: LICENSE.md
